@@ -1,8 +1,11 @@
 const redis = require('redis');
+const dotenv=require('dotenv');
+
+dotenv.config();
 
 // Environment variables for cache
-const cacheHostName = 'tapconnect.redis.cache.windows.net';
-const cachePassword = 'rYgBo4PD4pfwBhvvVQ3eJrzsc9ZlMtIDUAzCaFPaGcE=';
+const cacheHostName = process.env.REDIS_HOST_NAME;
+const cachePassword = process.env.REDIS_ACCESS_KEY;
 
 if (!cacheHostName) throw new Error("AZURE_CACHE_FOR_REDIS_HOST_NAME is empty");
 if (!cachePassword) throw new Error("AZURE_CACHE_FOR_REDIS_ACCESS_KEY is empty");
