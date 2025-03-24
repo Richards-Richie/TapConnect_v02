@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:encrypt/encrypt.dart' as encryption;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:tapconnect/ScannersList.dart';
 
 class QrCodeGenerator extends StatefulWidget {
   const QrCodeGenerator({super.key});
@@ -49,10 +50,25 @@ class _QrCodeGeneratorState extends State<QrCodeGenerator> {
   Future<void> _connectWebSocket(String wsUrl, String userId) async {
     // Establish the websocket connection on demand.
     channel = WebSocketChannel.connect(Uri.parse(wsUrl));
-
+    final Set<Map<String, dynamic>> scannerList = {};
     channel!.stream.listen(
       (message) {
-        print("Received from WebSocket: $message");
+        // print("Received from WebSocket: $message");
+        final parsedData = json.decode(message);
+        if (parsedData['type'] == 'scannersUpdate') {
+          print(parsedData['scanners']);
+          final scannersDetails = parsedData['scanners'] as List<dynamic>;
+          for (var scanner in scannersDetails) {
+            scannerList.add({'name': scanner['name'], 'details': scanner});
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ScannerDetailsList(scannersDetails: scannerList),
+            ),
+          );
+        }
         // Process message here...
       },
       onError: (error) {
@@ -153,7 +169,9 @@ class _QrCodeGeneratorState extends State<QrCodeGenerator> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _triggerQrDetails,
+              onPressed: () async {
+                await _triggerQrDetails();
+              },
               child: const Text("Get user Details"),
             ),
           ],

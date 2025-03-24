@@ -1,5 +1,5 @@
 const redis = require('redis');
-const dotenv=require('dotenv');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -7,24 +7,40 @@ dotenv.config();
 const cacheHostName = process.env.REDIS_HOST_NAME;
 const cachePassword = process.env.REDIS_ACCESS_KEY;
 
-if (!cacheHostName) throw new Error("AZURE_CACHE_FOR_REDIS_HOST_NAME is empty");
-if (!cachePassword) throw new Error("AZURE_CACHE_FOR_REDIS_ACCESS_KEY is empty");
+if (!cacheHostName) throw new Error("REDIS_HOST_NAME is empty");
+if (!cachePassword) throw new Error("REDIS_ACCESS_KEY is empty");
 
-// Create a Redis client instance (using 'rediss' for secure connection)
 const client = redis.createClient({
-    url: `rediss://${cacheHostName}:6380`,
-    password: cachePassword,
-    tls: { servername: cacheHostName }
-    });
+  url: `rediss://${cacheHostName}:6380`, // rediss = SSL
+  password: cachePassword,
+  socket: {
+    tls: true, // Must enable TLS for Azure Redis
+    rejectUnauthorized: false // Needed for Azure's SSL cert
+  },
+  retry_strategy: (options) => {
+    if (options.error && options.error.code === 'ECONNREFUSED') {
+      return new Error('The server refused the connection');
+    }
+    return Math.min(options.attempt * 100, 3000);
+  }
+});
 
-    // Connect to Redis
-    client.connect()
-    .then(() => {
-        console.log("Connected to Azure Redis Cache");
-        // Optionally, run test commands here if needed.
-    })
-    .catch(err => {
-        console.error("Error connecting to Azure Redis Cache:", err);
-    });
+// Event handlers
+client.on('connect', () => console.log('Connecting to Redis...'));
+client.on('ready', () => console.log('Connected to Azure Redis Cache'));
+client.on('error', (err) => console.error('Redis Client Error:', err));
+client.on('end', () => console.log('Disconnected from Redis'));
+
+// Connect with async/await for better error handling
+(async () => {
+  try {
+    await client.connect();
+    // Test connection with a simple command
+    await client.ping();
+  } catch (err) {
+    console.error('Connection failed:', err);
+    process.exit(1);
+  }
+})();
 
 module.exports = client;

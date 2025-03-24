@@ -89,7 +89,6 @@ app.post('/ScannerDetails', async (req, res) => {
         
         for(const id of set1){
             const userDetails=await data.findById(id);
-            console.log(userDetails);
             scannersDetails.push(userDetails);
         }
         console.log(scannersDetails);
