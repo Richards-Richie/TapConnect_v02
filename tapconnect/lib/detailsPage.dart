@@ -65,7 +65,7 @@ class _detailsState extends State<details> {
 
       final response = await http
           .post(
-            Uri.parse('http://localhost:5555/putDetails'),
+            Uri.parse('http://20.244.68.211:5555/putDetails'),
             headers: {'Content-Type': 'application/json'},
             body: json.encode({
               'name': name,

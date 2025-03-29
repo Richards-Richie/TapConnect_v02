@@ -110,7 +110,7 @@ const httpServer = app.listen(process.env.PORT, '0.0.0.0', () => {
     console.log("Listening on " + process.env.PORT);
 });
 
-const wss = new WebSocket.Server({ port: process.env.WSURL }, () => {
+const wss = new WebSocket.Server({ port: process.env.WSURL, },'0.0.0.0', () => {
     console.log("WebSocket server is listening on port: " + process.env.WSURL);
 });
 
