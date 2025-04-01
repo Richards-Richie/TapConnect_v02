@@ -25,7 +25,7 @@ class _ScannerPageState extends State<ScannerPage> {
 
   Future<void> _triggerScannerDetails(ScannerId, QrId) async {
     final triggerRes = await http.post(
-      Uri.parse('http://20.244.68.211:5555/ScannerDetails'),
+      Uri.parse('http://40.81.249.61:5555/ScannerDetails'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'scannerId': ScannerId, 'qrId': QrId}),
     );

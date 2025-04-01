@@ -92,7 +92,7 @@ class _QrCodeGeneratorState extends State<QrCodeGenerator> {
     if (userId == null) return;
 
     final response = await http.post(
-      Uri.parse('http://20.244.68.211:5555/QrDetails'),
+      Uri.parse('http://40.81.249.61:5555/QrDetails'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'userId': userId}),
     );
@@ -112,7 +112,7 @@ class _QrCodeGeneratorState extends State<QrCodeGenerator> {
       final userId1 = await _getUserId();
       if (userId1 != null && userId1.isNotEmpty) {
         final response = await http.post(
-          Uri.parse('http://20.244.68.211:5555/getDetails'),
+          Uri.parse('http://40.81.249.61:5555/getDetails'),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({'userId': userId1}),
         );

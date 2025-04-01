@@ -60,7 +60,7 @@ app.post('/QrDetails', async (req, res) => {
         }
         res.status(200).json({
         message: "QR details processed. Please connect to the WebSocket server for further updates.",
-        wsUrl: `ws://localhost:${process.env.WSURL}`
+        wsUrl: `ws://40.81.249.61:${process.env.WSURL}`
         });
     } catch (error) {
         console.error("Error processing QR details:", error);
